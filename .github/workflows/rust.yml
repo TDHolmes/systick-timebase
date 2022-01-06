@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Rust (thumbv7em)
+      - name: Install Rust (thumbv6m)
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: nightly
-          target: thumbv7em-none-eabihf
+          target: thumbv6m-none-eabi
 
       - name: Checkout Sources
         uses: actions/checkout@v2
@@ -32,7 +32,7 @@ jobs:
             - ~/.cargo/registry/index/
             - ~/.cargo/registry/cache/
             - ~/.cargo/git/db/
-          key: ${{ runner.OS }}-cargo-msrv-2-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.OS }}-cargo-msrv-2-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.OS }}-cargo-msrv-2-
 
@@ -42,27 +42,22 @@ jobs:
           find ~/.cargo/bin/
 
       - name: Verify MSRV
-        run: |
-          cargo msrv --verify --path ./embedded-profiling -- cargo check
-          cargo msrv --verify --path ./embedded-profiling-proc-macros -- cargo check
-          cargo msrv --verify --path ./ep-pin-toggle -- cargo check
-          cargo msrv --verify --path ./ep-systick -- cargo check
-          cargo msrv --verify --path ./ep-dwt -- cargo check
+        run: cargo msrv --verify
 
   build:
     runs-on: ubuntu-latest
     env:
-      CARGO_BUILD_TARGET: thumbv7em-none-eabihf
+      CARGO_BUILD_TARGET: thumbv6m-none-eabi
       RUSTFLAGS: -D warnings
 
     steps:
-      - name: Install Rust (thumbv7em)
+      - name: Install Rust (thumbv6m)
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: nightly
           override: true
-          target: thumbv7em-none-eabihf
+          target: thumbv6m-none-eabi
 
       - name: install cargo-all-features
         run: cargo install cargo-all-features --debug
@@ -78,7 +73,7 @@ jobs:
             - ~/.cargo/registry/index/
             - ~/.cargo/registry/cache/
             - ~/.cargo/git/db/
-          key: ${{ runner.OS }}-cargo-build-2-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.OS }}-cargo-build-2-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.OS }}-cargo-build-2-
 
@@ -86,7 +81,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: target
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.OS }}-build-
 
@@ -97,13 +92,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install Rust (thumbv7em)
+      - name: Install Rust (thumbv6m)
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           toolchain: nightly
           override: true
-          target: thumbv7em-none-eabihf
+          target: thumbv6m-none-eabi
           components: clippy, rustfmt
 
       - name: Checkout Sources
@@ -117,7 +112,7 @@ jobs:
             - ~/.cargo/registry/index/
             - ~/.cargo/registry/cache/
             - ~/.cargo/git/db/
-          key: ${{ runner.OS }}-cargo-test-2-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.OS }}-cargo-test-2-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.OS }}-cargo-test-2-
 
@@ -125,7 +120,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: target
-          key: ${{ runner.OS }}-test-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.OS }}-test-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: |
             ${{ runner.OS }}-test-
 
@@ -139,9 +134,9 @@ jobs:
 
       - name: Clippy
         env:
-          CARGO_BUILD_TARGET: thumbv7em-none-eabihf
+          CARGO_BUILD_TARGET: thumbv6m-none-eabi
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: embedded-profiling Clippy
+          name: systick-timebase Clippy
           args: --all-features -- -W clippy::pedantic -W clippy::nursery -W clippy::cargo
