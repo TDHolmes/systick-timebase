@@ -1,0 +1,16 @@
+[package]
+name = "systick-timebase"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fugit = "0.3"
+cortex-m = "0.7"
+cortex-m-rt = {version = "0.7", optional = true}
+
+[features]
+container-u64 = []
+extended = ["cortex-m-rt"]
+
+[package.metadata.cargo-all-features]
+denylist = ["cortex-m-rt"]
