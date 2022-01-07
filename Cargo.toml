@@ -1,5 +1,11 @@
 [package]
 name = "systick-timebase"
+repository = "https://github.com/TDHolmes/systick-timebase"
+description = """A clock reference based on the SysTick peripheral implemented in ARM cortex-M chips
+optionally extended to 32 or 64 bit resolution."""
+keywords = ["clock", "systick", "arm", "cortex-m", "no-std"]
+categories = ["embedded", "no-std"]
+license = "MIT OR Apache-2.0"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.57"

@@ -61,6 +61,7 @@ impl<const FREQ: u32> SysTickTimebase<FREQ> {
     ///
     /// # Panics
     /// asserts that the compile time constant `FREQ` matches the runtime provided `sysclk`
+    #[must_use]
     pub fn new(mut systick: SYST, clock_source: SystClkSource, sysclk: u32) -> Self {
         assert!(FREQ == sysclk);
 
@@ -77,6 +78,8 @@ impl<const FREQ: u32> SysTickTimebase<FREQ> {
     }
 
     /// Reads the current value from [`systick`](cortex_m::peripheral::SYST).
+    #[must_use]
+    #[allow(clippy::unused_self)]
     pub fn read(&self) -> fugit::Instant<TBContainer, 1, FREQ> {
         // Read SYSTICK and maybe account for rollovers
         let ticks = {
