@@ -7,10 +7,11 @@ edition = "2021"
 fugit = "0.3"
 cortex-m = "0.7"
 cortex-m-rt = {version = "0.7", optional = true}
+atomic-polyfill = {version = "0.1", optional = true}
 
 [features]
 container-u64 = []
-extended = ["cortex-m-rt"]
+extended = ["cortex-m-rt", "atomic-polyfill"]
 
 [package.metadata.cargo-all-features]
-denylist = ["cortex-m-rt"]
+denylist = ["cortex-m-rt", "atomic-polyfill"]

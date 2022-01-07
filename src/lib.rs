@@ -26,7 +26,7 @@
 use cortex_m::peripheral::{syst::SystClkSource, SYST};
 
 #[cfg(feature = "extended")]
-use core::sync::atomic::{AtomicU32, Ordering};
+use atomic_polyfill::{AtomicU32, Ordering};
 
 /// The container we return when reading out the timebase.
 #[cfg(feature = "container-u64")]
