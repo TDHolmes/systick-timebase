@@ -14,5 +14,10 @@ atomic-polyfill = {version = "0.1", optional = true}
 container-u64 = []
 extended = ["cortex-m-rt", "atomic-polyfill"]
 
+[dev-dependencies]
+cortex-m-rt = "0.7"
+cortex-m-semihosting = "0.3"
+panic-halt = "0.2"
+
 [package.metadata.cargo-all-features]
 denylist = ["cortex-m-rt", "atomic-polyfill"]

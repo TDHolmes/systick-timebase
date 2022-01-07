@@ -32,9 +32,7 @@ jobs:
             - ~/.cargo/registry/index/
             - ~/.cargo/registry/cache/
             - ~/.cargo/git/db/
-          key: ${{ runner.OS }}-cargo-msrv-2-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.OS }}-cargo-msrv-2-
+          key: ${{ runner.OS }}-cargo-msrv-${{ hashFiles('**/Cargo.toml') }}
 
       - name: install cargo-msrv
         run: |
@@ -79,14 +77,12 @@ jobs:
         with:
           path: target
           key: ${{ runner.OS }}-build-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.OS }}-build-
 
-      - name: Build (default)
+      - name: Build
         env:
           CARGO_BUILD_TARGET: thumbv6m-none-eabi
           RUSTFLAGS: -D warnings
-        run: cargo build-all-features
+        run: cargo build-all-features --examples --tests
 
   test:
     runs-on: ubuntu-latest
@@ -112,9 +108,7 @@ jobs:
             - ~/.cargo/registry/index/
             - ~/.cargo/registry/cache/
             - ~/.cargo/git/db/
-          key: ${{ runner.OS }}-cargo-test-2-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.OS }}-cargo-test-2-
+          key: ${{ runner.OS }}-cargo-test-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Cache Build Output Dependencies
         uses: actions/cache@v2
