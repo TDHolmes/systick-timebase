@@ -82,7 +82,7 @@ jobs:
         env:
           CARGO_BUILD_TARGET: thumbv6m-none-eabi
           RUSTFLAGS: -D warnings
-        run: cargo build-all-features --examples --tests
+        run: cargo build-all-features --examples
 
   test:
     runs-on: ubuntu-latest
@@ -120,11 +120,6 @@ jobs:
 
       - name: Check Formatting
         run: cargo fmt --check
-
-      - name: test all crates
-        env:
-          RUSTFLAGS: -D warnings
-        run: cargo test
 
       - name: Clippy
         env:
