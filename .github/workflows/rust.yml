@@ -46,9 +46,6 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    env:
-      CARGO_BUILD_TARGET: thumbv6m-none-eabi
-      RUSTFLAGS: -D warnings
 
     steps:
       - name: Install Rust (thumbv6m)
@@ -58,9 +55,6 @@ jobs:
           toolchain: nightly
           override: true
           target: thumbv6m-none-eabi
-
-      - name: install cargo-all-features
-        run: cargo install cargo-all-features --debug
 
       - name: Checkout Sources
         uses: actions/checkout@v2
@@ -77,6 +71,9 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-cargo-build-2-
 
+      - name: install cargo-all-features
+        run: cargo install cargo-all-features --debug
+
       - name: Cache Build Output Dependencies
         uses: actions/cache@v2
         with:
@@ -86,6 +83,9 @@ jobs:
             ${{ runner.OS }}-build-
 
       - name: Build (default)
+        env:
+          CARGO_BUILD_TARGET: thumbv6m-none-eabi
+          RUSTFLAGS: -D warnings
         run: cargo build-all-features
 
   test:
