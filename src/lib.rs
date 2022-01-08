@@ -23,7 +23,8 @@
 //! [`SysTick`]: `cortex_m::peripheral::scb::Exception::SysTick`
 #![cfg_attr(not(test), no_std)]
 
-use cortex_m::peripheral::{syst::SystClkSource, SYST};
+use cortex_m::peripheral::SYST;
+pub use cortex_m::peripheral::syst::SystClkSource;
 
 #[cfg(feature = "extended")]
 use atomic_polyfill::{AtomicU32, Ordering};
