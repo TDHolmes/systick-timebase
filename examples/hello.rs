@@ -19,16 +19,23 @@ fn get_systick() -> &'static systick_timebase::SysTickTimebase<FREQ> {
 
 macro_rules! log {
     () => {
-        let ticks_us = Duration::micros(get_systick().read().ticks()).ticks();
-        ::cortex_m_semihosting::hprintln!("{} µs: ", ticks_us)
+        ::cortex_m_semihosting::hprintln!(
+            "{} µs: ",
+            Duration::micros(get_systick().read().ticks()).ticks()
+        )
     };
     ($s:expr) => {
-        let ticks_us = Duration::micros(get_systick().read().ticks()).ticks();
-        ::cortex_m_semihosting::hprintln!(concat!("{} µs: ", $s), ticks_us)
+        ::cortex_m_semihosting::hprintln!(
+            concat!("{} µs: ", $s),
+            Duration::micros(get_systick().read().ticks()
+        ).ticks())
     };
     ($s:expr, $($tt:tt)*) => {
-        let ticks_us = Duration::micros(get_systick().read().ticks()).ticks();
-        ::cortex_m_semihosting::hprintln!(concat!("{} µs: ", $s), ticks_us, $($tt)*)
+        ::cortex_m_semihosting::hprintln!(
+            concat!("{} µs: ", $s),
+            Duration::micros(get_systick().read().ticks()).ticks(),
+            $($tt)*
+        )
     };
 }
 
@@ -44,7 +51,7 @@ fn main() -> ! {
     }
 
     for i in 0..100 {
-        log!("Hello, world! {}", i);
+        log!("Hello, world! {}", i).ok();
     }
 
     // exit QEMU
