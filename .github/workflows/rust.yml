@@ -113,8 +113,6 @@ jobs:
         with:
           path: target
           key: ${{ runner.OS }}-test-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.OS }}-test-
 
       - name: Check Formatting
         run: cargo fmt --check
@@ -129,7 +127,7 @@ jobs:
           args: --all-features -- -W clippy::pedantic -W clippy::nursery -W clippy::cargo
 
   qemu-test:
-    name: "Qemu Tests"
+    name: "qemu tests"
     runs-on: ubuntu-latest
 
     steps:
@@ -152,20 +150,18 @@ jobs:
             - ~/.cargo/registry/index/
             - ~/.cargo/registry/cache/
             - ~/.cargo/git/db/
-          key: ${{ runner.OS }}-cargo-test-${{ hashFiles('**/Cargo.toml') }}
+          key: ${{ runner.OS }}-cargo-qemu-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Cache Build Output Dependencies
         uses: actions/cache@v2
         with:
           path: target
-          key: ${{ runner.OS }}-test-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.OS }}-test-
+          key: ${{ runner.OS }}-qemu-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Install Qemu
         run: |
           sudo apt-get clean && sudo apt-get update
-          sudo apt-get install qemu
+          sudo apt-get install qemu-system-arm qemu
 
       - name: Run Qemu Tests
         run: python3 run-qemu-tests.py
