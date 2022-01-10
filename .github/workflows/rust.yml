@@ -127,3 +127,45 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: systick-timebase Clippy
           args: --all-features -- -W clippy::pedantic -W clippy::nursery -W clippy::cargo
+
+  qemu-test:
+    name: "Qemu Tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Rust (thumbv7m)
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          target: thumbv7m-none-eabi
+
+      - name: Checkout Sources
+        uses: actions/checkout@v2
+
+      - name: Cache Cargo Dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            - ~/.cargo/bin/
+            - ~/.cargo/registry/index/
+            - ~/.cargo/registry/cache/
+            - ~/.cargo/git/db/
+          key: ${{ runner.OS }}-cargo-test-${{ hashFiles('**/Cargo.toml') }}
+
+      - name: Cache Build Output Dependencies
+        uses: actions/cache@v2
+        with:
+          path: target
+          key: ${{ runner.OS }}-test-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.OS }}-test-
+
+      - name: Install Qemu
+        run: |
+          sudo apt-get clean && sudo apt-get update
+          sudo apt-get install qemu
+
+      - name: Run Qemu Tests
+        run: python3 run-qemu-tests.py
