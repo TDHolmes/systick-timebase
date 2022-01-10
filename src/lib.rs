@@ -40,6 +40,13 @@
 //!
 //! enables the return type to be `u64` instead of `u32`.
 //!
+//! ### `embedded-hal`
+//!
+//! Enables the optional dependency [`embedded_hal`] and implements [`DelayMs`] and [`DelayUs`].
+//! It is implemented for `u8`, `u16`, `u32, and `u64`, if `container-u64 is enabled. The delay
+//! implementation works across overflow, and is thus reliable with any combination of the other
+//! features.
+//!
 //! [`SYST`]: cortex_m::peripheral::SYST
 //! [`SysTick`]: `cortex_m::peripheral::scb::Exception::SysTick`
 #![cfg_attr(not(test), no_std)]
@@ -69,6 +76,16 @@ const SYSTICK_RELOAD: u32 = 0x00FF_FFFF;
 /// the resolution of [`systick`](cortex_m::peripheral::SYST), 2**24
 #[cfg(feature = "extended")]
 const SYSTICK_RESOLUTION: TBContainer = 0x0100_0000;
+
+#[cfg(all(feature = "extended", feature = "container-u64"))]
+#[allow(unused)]
+const MAX_TICKS: u64 = u64::MAX;
+#[cfg(all(feature = "extended", not(feature = "container-u64")))]
+#[allow(unused)]
+const MAX_TICKS: u64 = u32::MAX as u64;
+#[cfg(not(feature = "extended"))]
+#[allow(unused)]
+const MAX_TICKS: u64 = SYSTICK_RELOAD as u64;
 
 /// [`systick`](cortex_m::peripheral::SYST) timebase.
 ///
@@ -149,16 +166,22 @@ impl<const FREQ: u32> DelayUs<u64> for SysTickTimebase<FREQ> {
     fn delay_us(&mut self, us: u64) {
         let ticks_per_us: u64 = self.sysclk as u64 / 1_000_000;
 
-        let start = self.read().ticks();
-        let end = start + ticks_per_us * us;
+        let mut start = self.read().ticks();
+        let mut ticks_to_wait = ticks_per_us * us;
         let mut previous = start;
         loop {
             let time = self.read().ticks();
-            if time >= end {
-                break;
-            }
+
             if time < previous {
-                panic!("Detected overflow while delaying");
+                // If we've overflowed, we know at what tick value we overflow at (`MAX_TICKS`),
+                // so we just need to reduce `ticks_to_wait` by how much time has elapsed and pretend
+                // we're delaying for less time, starting at 0.
+                ticks_to_wait -= MAX_TICKS - start;
+                start = 0;
+            }
+
+            if time >= start + ticks_to_wait {
+                break;
             }
 
             previous = time;
@@ -178,16 +201,22 @@ impl<const FREQ: u32> DelayUs<u32> for SysTickTimebase<FREQ> {
     fn delay_us(&mut self, us: u32) {
         let ticks_per_us: u32 = self.sysclk as u32 / 1_000_000;
 
-        let start = self.read().ticks();
-        let end = start + ticks_per_us * us;
+        let mut start = self.read().ticks();
+        let mut ticks_to_wait = ticks_per_us * us;
         let mut previous = start;
         loop {
             let time = self.read().ticks();
-            if time >= end {
-                break;
-            }
+
             if time < previous {
-                panic!("Detected overflow while delaying");
+                // If we've overflowed, we know at what tick value we overflow at (`MAX_TICKS`),
+                // so we just need to reduce `ticks_to_wait` by how much time has elapsed and pretend
+                // we're delaying for less time, starting at 0.
+                ticks_to_wait -= MAX_TICKS as u32 - start;
+                start = 0;
+            }
+
+            if time >= start + ticks_to_wait {
+                break;
             }
 
             previous = time;

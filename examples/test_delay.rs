@@ -53,6 +53,10 @@ fn main() -> ! {
         get_systick_mut().delay_ms(250_u64);
     }
 
+    // Test something that will definitely overflow
+    hprintln!("5s delay (u32)").ok();
+    get_systick_mut().delay_ms(5_000_u32);
+
     debug::exit(debug::EXIT_SUCCESS);
 
     loop {}
