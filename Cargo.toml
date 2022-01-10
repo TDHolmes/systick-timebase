@@ -15,6 +15,7 @@ exclude = ["build.rs", ".cargo/*", ".github/*", "examples/*", "memory.x"]
 [dependencies]
 fugit = "0.3"
 cortex-m = "0.7"
+embedded-hal = {version = "0.2", optional = true}
 cortex-m-rt = {version = "0.7", optional = true}
 atomic-polyfill = {version = "0.1", optional = true}
 
@@ -26,6 +27,10 @@ extended = ["cortex-m-rt", "atomic-polyfill"]
 cortex-m-rt = "0.7"
 cortex-m-semihosting = "0.3"
 panic-halt = "0.2"
+
+[[example]]
+name = "test_delay"
+required-features = ["embedded-hal"]
 
 [package.metadata.cargo-all-features]
 denylist = ["cortex-m-rt", "atomic-polyfill"]
