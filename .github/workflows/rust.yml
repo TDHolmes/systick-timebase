@@ -65,9 +65,7 @@ jobs:
             - ~/.cargo/registry/index/
             - ~/.cargo/registry/cache/
             - ~/.cargo/git/db/
-          key: ${{ runner.OS }}-cargo-build-2-${{ hashFiles('**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.OS }}-cargo-build-2-
+          key: ${{ runner.OS }}-cargo-build-${{ hashFiles('**/Cargo.toml') }}
 
       - name: install cargo-all-features
         run: cargo install cargo-all-features --debug
