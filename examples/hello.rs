@@ -7,33 +7,40 @@ use panic_halt as _;
 
 use cortex_m::Peripherals as CorePeripherals;
 use cortex_m_rt::entry;
+use systick_timebase::{SysTickTimebase, TBContainer, TBInstant};
 
 const FREQ: u32 = 12_000_000;
-static mut SYSTICK: Option<systick_timebase::SysTickTimebase<FREQ>> = None;
+static mut SYSTICK: Option<SysTickTimebase<FREQ>> = None;
 
-type Duration = fugit::Duration<systick_timebase::TBContainer, 1, FREQ>;
+type Duration = fugit::Duration<TBContainer, 1, FREQ>;
 
-fn get_systick() -> &'static systick_timebase::SysTickTimebase<FREQ> {
+/// Gets a reference to the global systick timebase.
+fn get_systick() -> &'static SysTickTimebase<FREQ> {
     unsafe { SYSTICK.as_ref().expect("systick uninitialized") }
+}
+
+/// Converts the given instant to time in µs.
+fn to_micros(instant: TBInstant<FREQ>) -> TBContainer {
+    Duration::micros(instant.ticks()).ticks()
 }
 
 macro_rules! log {
     () => {
         ::cortex_m_semihosting::hprintln!(
             "{} µs: ",
-            Duration::micros(get_systick().read().ticks()).ticks()
+            to_micros(get_systick().read())
         )
     };
     ($s:expr) => {
         ::cortex_m_semihosting::hprintln!(
             concat!("{} µs: ", $s),
-            Duration::micros(get_systick().read().ticks()
-        ).ticks())
+            to_micros(get_systick().read())
+        )
     };
     ($s:expr, $($tt:tt)*) => {
         ::cortex_m_semihosting::hprintln!(
             concat!("{} µs: ", $s),
-            Duration::micros(get_systick().read().ticks()).ticks(),
+            to_micros(get_systick().read()),
             $($tt)*
         )
     };

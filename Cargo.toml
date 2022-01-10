@@ -29,3 +29,16 @@ panic-halt = "0.2"
 
 [package.metadata.cargo-all-features]
 denylist = ["cortex-m-rt", "atomic-polyfill"]
+
+[package.metadata.docs.rs]
+default-target = "thumbv7em-none-eabihf"
+targets = [
+    "thumbv6m-none-eabi",
+    "thumbv7m-none-eabi",
+    "thumbv7em-none-eabi",
+    "thumbv7em-none-eabihf",
+    "thumbv8m.base-none-eabi",
+    "thumbv8m.main-none-eabi",
+    "thumbv8m.main-none-eabihf",
+]
+all-features = true

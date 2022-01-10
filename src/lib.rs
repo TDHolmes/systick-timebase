@@ -2,11 +2,32 @@
 //!
 //! This timebase depends on the [`SYST`] hardware common to most cortex-M devices.
 //! The timebases' configured resolution is the same as the core clock. Depending on the speed
-//! if the source clock provided to [`SYST`], this timebase might quickly overflow and be useless.
+//! of the source clock provided to [`SYST`], this timebase might quickly overflow and be useless.
 //! To mitigate this, one can use the `extended` feature, which extends the resolution of
-//! the counter from 24 bit to [`u32`] or [`u64`] using the [`SysTick`] exception. It is set
-//! to expire just before overflow, so you can expect an exception to fire every 2**24
-//! clock cycles.
+//! the counter from 24 bit to [`u32`] or [`u64`] (depending on `container-u64`) using the
+//! [`SysTick`] exception. It is set to expire just before overflow, so you can expect an exception
+//! to fire every 2**24 clock cycles.
+//!
+//! ```no_run
+//! # macro_rules! log {($s:expr, $($tt:tt)*) => { () }}
+//! use systick_timebase::{SysTickTimebase, SystClkSource};
+//! use cortex_m::Peripherals as CorePeripherals;
+//!
+//! const FREQ: u32 = 24_000_000; // if our core clock is 24 MHz
+//!
+//! let core = CorePeripherals::take().unwrap();
+//! let timebase = cortex_m::singleton!(
+//!     : SysTickTimebase::<FREQ> = SysTickTimebase::new(
+//!         core.SYST,
+//!         SystClkSource::Core,
+//!         FREQ,
+//!     )
+//! );
+//!
+//! for i in 0..100 {
+//!     log!("time: {}", timebase.time());
+//! }
+//! ```
 //!
 //! ## Features
 //!
