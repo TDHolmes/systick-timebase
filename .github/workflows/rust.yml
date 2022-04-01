@@ -22,7 +22,7 @@ jobs:
           target: thumbv6m-none-eabi
 
       - name: Checkout Sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cache Cargo Dependencies
         uses: actions/cache@v3.0.1
@@ -55,7 +55,7 @@ jobs:
           target: thumbv6m-none-eabi
 
       - name: Checkout Sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cache Cargo Dependencies
         uses: actions/cache@v3.0.1
@@ -96,7 +96,7 @@ jobs:
           components: clippy, rustfmt
 
       - name: Checkout Sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cache Cargo Dependencies
         uses: actions/cache@v3.0.1
@@ -140,7 +140,7 @@ jobs:
           target: thumbv7m-none-eabi
 
       - name: Checkout Sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cache Cargo Dependencies
         uses: actions/cache@v3.0.1
